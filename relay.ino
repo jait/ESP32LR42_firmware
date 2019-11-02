@@ -8,6 +8,7 @@ const int _relays[NUM_RELAYS] = {Rly1, Rly2, Rly3, Rly4};
 
 bool setRelay(char rly, char state)
 {
+  int i;
   if (state == '0' || state == 0)
     state = LOW;
   else if (state == '1' || state == 1)
@@ -26,6 +27,18 @@ bool setRelay(char rly, char state)
   // start timer if some relay was turned on
   if (state == HIGH && RelayOffTimer == 0) {
     RelayOffTimer = millis() + RELAY_SHUTOFF_TIME;
+  } else if (state == LOW && RelayOffTimer != 0) {
+      // remove timer if all relays are off
+      bool allOff = true;
+      for (i = 0; i < NUM_RELAYS; i++) {
+        if (getRelay(i) > 0) {
+          allOff = false;
+          break;
+        }
+      }
+      if (allOff) {
+        RelayOffTimer = 0;
+      }
   }
 
   return true;

@@ -46,8 +46,8 @@ char N2Topic[BUFSIZE];
 
 
 char Inputs[8] = {2,2,2,2,2,2,2,2};
-char Relays[4] = {0,0,0,0};
- 
+char Relays[4] = {-1,-1,-1,-1}; // relay states, initially unknown
+
 void setup()
 {
     pinMode(Rly1, OUTPUT);      // set the pin modes

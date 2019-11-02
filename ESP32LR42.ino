@@ -73,14 +73,16 @@ void loop(){
   modeHttp();
   modeAscii();
   modeMQTT();
+  modeRelay();
   serialMonitor();
-  if(WiFi.status() != WL_CONNECTED)wifi_connect();
+  if (WiFi.status() != WL_CONNECTED)
+    wifi_connect();
 }
 
 void wifi_connect(void)
 {
     unsigned int x;
-    
+
     digitalWrite(Led, HIGH);
     Serial.println("");
     nvm.begin("devantech", false);    // Note: Namespace name is limited to 15 chars
@@ -111,7 +113,7 @@ void wifi_connect(void)
     Serial.print("Connecting to ");
     Serial.print(ssid);
     Serial.println("...");
-    
+
     if(local_IP != 0) {
       if (!WiFi.config(local_IP, gateway, subnet, primaryDNS, secondaryDNS)) {
         Serial.println("STA Failed to configure");
@@ -137,5 +139,5 @@ void wifi_connect(void)
     tcpServer.close();
     tcpServer = WiFiServer(AsciiPort);
     tcpServer.begin();
-    setupMQTT();   
+    setupMQTT();
 }

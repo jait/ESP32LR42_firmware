@@ -1,6 +1,6 @@
 
 enum cmds { CMD_NONE, CMD_ST, CMD_RB, CMD_IP, CMD_SB, CMD_GW, CMD_PD, CMD_SD, CMD_SS, CMD_PW, CMD_PA, CMD_MS, CMD_MP, CMD_MD, 
-            CMD_R1, CMD_R2, CMD_R3, CMD_R4, CMD_R5, CMD_R6, CMD_R7, CMD_R8,
+            CMD_R1, CMD_R2, CMD_R3, CMD_R4, CMD_RS1, CMD_RS2, CMD_RS3, CMD_RS4,
             CMD_N1, CMD_N2, CMD_N3, CMD_N4, CMD_N5, CMD_N6, CMD_N7, CMD_N8
           };
 
@@ -220,6 +220,46 @@ uint port;
         }
         else Serial.println("Relay 4 MQTT topic string not found");    
         break;
+      case CMD_RS1:
+        p = getStrPtr(&buffer[4]);
+        if(p) {
+          nvm.putString("R1PubTopic", p);
+          nvm.getString("R1PubTopic", R1PubTopic, BUFSIZE-1);
+          Serial.print("OK. Saved Relay 1 Status Topic: ");
+          Serial.println(R1PubTopic);
+        }
+        else Serial.println("Relay 1 MQTT status topic string not found");
+        break;
+      case CMD_RS2:
+        p = getStrPtr(&buffer[4]);
+        if(p) {
+          nvm.putString("R2PubTopic", p);
+          nvm.getString("R2PubTopic", R2PubTopic, BUFSIZE-1);
+          Serial.print("OK. Saved Relay 2 Status Topic: ");
+          Serial.println(R2PubTopic);
+        }
+        else Serial.println("Relay 2 MQTT status topic string not found");
+        break;
+      case CMD_RS3:
+        p = getStrPtr(&buffer[4]);
+        if(p) {
+          nvm.putString("R3PubTopic", p);
+          nvm.getString("R3PubTopic", R3PubTopic, BUFSIZE-1);
+          Serial.print("OK. Saved Relay 3 Status Topic: ");
+          Serial.println(R3PubTopic);
+        }
+        else Serial.println("Relay 3 MQTT status topic string not found");
+        break;
+      case CMD_RS4:
+        p = getStrPtr(&buffer[4]);
+        if(p) {
+          nvm.putString("R4PubTopic", p);
+          nvm.getString("R4PubTopic", R4PubTopic, BUFSIZE-1);
+          Serial.print("OK. Saved Relay 4 Status Topic: ");
+          Serial.println(R4PubTopic);
+        }
+        else Serial.println("Relay 4 MQTT status topic string not found");
+        break;
       case CMD_N1:
         p = getStrPtr(&buffer[3]);
         if(p) {
@@ -272,7 +312,7 @@ char* skipWhite(char *p)
 
 char * getStrPtr(char *p)
 {
-char *p1;
+  char *p1;
 
   p = skipWhite(p);
   if(*p!='"') return 0;
@@ -287,8 +327,8 @@ char *p1;
 
 bool getMLine(void)
 {
-static int idx = 0;
-char c;
+  static int idx = 0;
+  char c;
 
   if(Serial.available()) {
     c = Serial.read();
@@ -338,10 +378,16 @@ int getCommand()
   }
   else if(toupper(buffer[0]) == 'R') {
     if(toupper(buffer[1]) == 'B') return CMD_RB; // ReBoot
-    if(toupper(buffer[1]) == '1') return CMD_R1; // MQTT Relay Topics
-    if(toupper(buffer[1]) == '2') return CMD_R2; 
-    if(toupper(buffer[1]) == '3') return CMD_R3; 
-    if(toupper(buffer[1]) == '4') return CMD_R4; 
+    if(toupper(buffer[1]) == '1') return CMD_R1; // MQTT Relay Command Topics
+    if(toupper(buffer[1]) == '2') return CMD_R2;
+    if(toupper(buffer[1]) == '3') return CMD_R3;
+    if(toupper(buffer[1]) == '4') return CMD_R4;
+    if(toupper(buffer[1]) == 'S') {
+      if(toupper(buffer[2]) == '1') return CMD_RS1; // MQTT Relay Status Topics
+      if(toupper(buffer[2]) == '2') return CMD_RS2;
+      if(toupper(buffer[2]) == '3') return CMD_RS3;
+      if(toupper(buffer[2]) == '4') return CMD_RS4;
+    }
 
   }
   else if(toupper(buffer[0]) == 'N') {

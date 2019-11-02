@@ -37,11 +37,16 @@ char R1Topic[BUFSIZE];    // Relay topics
 char R2Topic[BUFSIZE];
 char R3Topic[BUFSIZE];
 char R4Topic[BUFSIZE];
+char R1PubTopic[BUFSIZE];    // Relay topics where state is published
+char R2PubTopic[BUFSIZE];
+char R3PubTopic[BUFSIZE];
+char R4PubTopic[BUFSIZE];
 char N1Topic[BUFSIZE];    // Input topics
 char N2Topic[BUFSIZE];
 
 
 char Inputs[8] = {2,2,2,2,2,2,2,2};
+char Relays[4] = {0,0,0,0};
  
 void setup()
 {
@@ -94,7 +99,11 @@ void wifi_connect(void)
     nvm.getString("R1Topic", R1Topic, BUFSIZE-1);    
     nvm.getString("R2Topic", R2Topic, BUFSIZE-1);    
     nvm.getString("R3Topic", R3Topic, BUFSIZE-1);    
-    nvm.getString("R4Topic", R4Topic, BUFSIZE-1);    
+    nvm.getString("R4Topic", R4Topic, BUFSIZE-1);
+    nvm.getString("R1PubTopic", R1PubTopic, BUFSIZE-1);    
+    nvm.getString("R2PubTopic", R2PubTopic, BUFSIZE-1);    
+    nvm.getString("R3PubTopic", R3PubTopic, BUFSIZE-1);    
+    nvm.getString("R4PubTopic", R4PubTopic, BUFSIZE-1);    
     nvm.getString("N1Topic", N1Topic, BUFSIZE-1);    
     nvm.getString("N2Topic", N2Topic, BUFSIZE-1);   
 
@@ -112,7 +121,7 @@ void wifi_connect(void)
 
     while(WiFi.status() != WL_CONNECTED){
       WiFi.disconnect();
-      delay(100);     
+      delay(100);
       WiFi.begin(ssid, password);
       for(x = 0; x < 300; x++){
         delay(10);

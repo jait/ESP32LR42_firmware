@@ -46,7 +46,7 @@ int cmd = 0, rly, state;
                 rly = ALine[idx++];
                 while(isspace(ALine[idx])) ++idx;     // skip white space
                 state = ALine[idx];
-                if(setRelay(rly, state)) Aclient.println("ok");
+                if (setRelay(rly, state)) Aclient.println("ok");
                 else Aclient.println("fail");
                 idx = 0;
                 break;
@@ -103,33 +103,6 @@ int cmd = 0, rly, state;
     }
   }     // switch
 }       // function
-
-
-bool setRelay(char rly, char state) 
-{
-  if(state=='0') state = 0;
-  else if(state=='1') state = 1;
-  else return false;
-  
-  switch(rly) {
-    case '1': digitalWrite(Rly1, state); return true;
-    case '2': digitalWrite(Rly2, state); return true;
-    case '3': digitalWrite(Rly3, state); return true;
-    case '4': digitalWrite(Rly4, state); return true;
-  }
-  return false;
-}
-
-char getRelay(char rly)
-{
-  switch(rly) {
-    case '1': return digitalRead(Rly1);
-    case '2': return digitalRead(Rly2);
-    case '3': return digitalRead(Rly3);
-    case '4': return digitalRead(Rly4);
-  }
-  return '?';
-}
 
 char getInput(char inp)
 {

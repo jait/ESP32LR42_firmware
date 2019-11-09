@@ -14,6 +14,11 @@ IPAddress subnet(255, 255, 0, 0);
 IPAddress primaryDNS(8, 8, 8, 8); //optional
 IPAddress secondaryDNS(8, 8, 4, 4); //optional
 
+// hour
+#define DEFAULT_RELAY_SHUTOFF_TIME 60*60*1000
+// milliseconds
+uint32_t relayShutoffTime = DEFAULT_RELAY_SHUTOFF_TIME;
+
 #define Rly1  33
 #define Rly2  25
 #define Rly3  26
@@ -66,6 +71,13 @@ void setup()
     Serial.begin(115200);
     delay(10);
     
+    relayShutoffTime = nvm.getUInt("shutoffTimer", 0);
+    if (relayShutoffTime > 0) {
+      relayShutoffTime *= (60*1000); // minutes to milliseconds
+    }
+    else {
+      relayShutoffTime = DEFAULT_RELAY_SHUTOFF_TIME;
+    }
     wifi_connect();
 }
 

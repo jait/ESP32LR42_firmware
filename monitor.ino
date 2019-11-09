@@ -1,14 +1,14 @@
 
-enum cmds { CMD_NONE, CMD_ST, CMD_RB, CMD_IP, CMD_SB, CMD_GW, CMD_PD, CMD_SD, CMD_SS, CMD_PW, CMD_PA, CMD_MS, CMD_MP, CMD_MD, 
+enum cmds { CMD_NONE, CMD_ST, CMD_RB, CMD_IP, CMD_SB, CMD_GW, CMD_PD, CMD_SD, CMD_SO, CMD_SS, CMD_PW, CMD_PA, CMD_MS, CMD_MP, CMD_MD, 
             CMD_R1, CMD_R2, CMD_R3, CMD_R4, CMD_RS1, CMD_RS2, CMD_RS3, CMD_RS4,
             CMD_N1, CMD_N2, CMD_N3, CMD_N4, CMD_N5, CMD_N6, CMD_N7, CMD_N8
           };
 
 void serialMonitor(void)
 {
-IPAddress IP, IPZ;
-char *p;
-uint port;
+  IPAddress IP, IPZ;
+  char *p;
+  uint port, shutoffTimer;
 
   if(getMLine()) {
     int cmd = getCommand();
@@ -76,7 +76,7 @@ uint port;
         Serial.println("Re-Booting.. .");
         delay(500);
         esp_restart();
-        break;       
+        break;
       case CMD_IP:
         p = getStrPtr(&buffer[3]);
         if(p) {
@@ -120,6 +120,15 @@ uint port;
           nvm.putUInt("secondaryDNS", IP);
           Serial.print("OK. Saved Secondary DNS: "); 
           Serial.println(IP.toString());
+        }
+        break;
+      case CMD_SO:
+        shutoffTimer = getNumber(&buffer[3]);
+        if (shutoffTimer > 0 && shutoffTimer < 120) {
+          nvm.putUInt("shutoffTimer", shutoffTimer);
+          Serial.print("OK. Saved shutoff timer: ");
+          Serial.println(shutoffTimer);
+          relayShutoffTime = shutoffTimer * 60 * 1000;
         }
         break;
       case CMD_SS:
@@ -287,8 +296,8 @@ uint port;
 
 int getIP(char* p)
 {
-char *p1;
-IPAddress IP;
+  char *p1;
+  IPAddress IP;
 
    p = skipWhite(p);
    p1 = p;
@@ -355,10 +364,11 @@ bool getMLine(void)
 int getCommand()
 {
   if(toupper(buffer[0]) == 'S') {
-    if(toupper(buffer[1]) == 'T') return CMD_ST; 
-    if(toupper(buffer[1]) == 'B') return CMD_SB; 
-    if(toupper(buffer[1]) == 'D') return CMD_SD; 
-    if(toupper(buffer[1]) == 'S') return CMD_SS; 
+    if(toupper(buffer[1]) == 'T') return CMD_ST;
+    if(toupper(buffer[1]) == 'B') return CMD_SB;
+    if(toupper(buffer[1]) == 'D') return CMD_SD;
+    if(toupper(buffer[1]) == 'O') return CMD_SO;
+    if(toupper(buffer[1]) == 'S') return CMD_SS;
   }
   else if(toupper(buffer[0]) == 'I') {
     if(toupper(buffer[1]) == 'P') return CMD_IP; 

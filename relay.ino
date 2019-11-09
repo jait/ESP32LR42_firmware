@@ -1,7 +1,6 @@
 
 
-#define RELAY_SHUTOFF_TIME 15000 // milliseconds
-int RelayOffTimer = 0;
+unsigned long RelayOffTimer = 0;
 
 const int NUM_RELAYS = 4;
 const int _relays[NUM_RELAYS] = {Rly1, Rly2, Rly3, Rly4};
@@ -26,7 +25,7 @@ bool setRelay(char rly, char state)
   digitalWrite(_relays[rly], state);
   // start timer if some relay was turned on
   if (state == HIGH && RelayOffTimer == 0) {
-    RelayOffTimer = millis() + RELAY_SHUTOFF_TIME;
+    RelayOffTimer = millis() + relayShutoffTime;
   } else if (state == LOW && RelayOffTimer != 0) {
       // remove timer if all relays are off
       bool allOff = true;
